@@ -1095,8 +1095,8 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 1 * 30; // Zoocoin: 3.5 days
-static const int64 nTargetSpacing = 3.5 * 24 * 60 * 60; // Zoocoin: 3.5 days
+static const int64 nTargetTimespan = 2 * 30; // Zoocoin: 1 minutes
+static const int64 nTargetSpacing = 1 * 30; // Zoocoin: 30 seconds
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 //
@@ -2742,9 +2742,9 @@ bool LoadBlockIndex()
 {
     if (fTestNet)
     {
-        pchMessageStart[0] = 0xa1;
-        pchMessageStart[1] = 0xb2;
-        pchMessageStart[2] = 0xc3;
+        pchMessageStart[0] = 0xd2;
+        pchMessageStart[1] = 0xc3;
+        pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xdc;
         hashGenesisBlock = uint256("0x");
     }
@@ -2791,13 +2791,13 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1510213934;
+        block.nTime    = 1510231015;
         block.nBits    = 0x1e0ffff0;
         block.nNonce   = 0;
 
         if (fTestNet)
         {
-            block.nTime    = 1510213934;
+            block.nTime    = 1510231015;
             block.nNonce   = 0;
         }
 
@@ -2807,6 +2807,36 @@ bool InitBlockIndex() {
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
         assert(block.hashMerkleRoot == uint256("0x"));
+		if (true && block.GetHash() != hashGenesisBlock)
+		        {
+		            printf("Searching for genesis block...\n");
+		            // This will figure out a valid hash and Nonce if you're
+		            // creating a different genesis block:
+		            uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
+		            uint256 thash;
+		            char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
+
+		            loop
+		            {
+		                scrypt_1024_1_1_256_sp(BEGIN(block.nVersion), BEGIN(thash), scratchpad);
+		                if (thash <= hashTarget)
+		                    break;
+		                if ((block.nNonce & 0xFFF) == 0)
+		                {
+		                    printf("nonce %08X: hash = %s (target = %s)\n", block.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
+		                }
+		                ++block.nNonce;
+		                if (block.nNonce == 0)
+		                {
+		                    printf("NONCE WRAPPED, incrementing time\n");
+		                    ++block.nTime;
+		                }
+		            }
+		            printf("block.nTime = %u \n", block.nTime);
+		            printf("block.nNonce = %u \n", block.nNonce);
+		            printf("block.GetHash = %s\n", block.GetHash().ToString().c_str());
+            
+		            }
         block.print();
         assert(hash == hashGenesisBlock);
 
