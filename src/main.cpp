@@ -35,7 +35,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x");
+uint256 hashGenesisBlock("0xb02cc86b10f5e9a33dc514c544a78002d12c6dded8bf06e6bf16a9ede233fd02");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Zoocoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2746,7 +2746,7 @@ bool LoadBlockIndex()
         pchMessageStart[1] = 0xc3;
         pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xdc;
-        hashGenesisBlock = uint256("0x");
+        hashGenesisBlock = uint256("0xb02cc86b10f5e9a33dc514c544a78002d12c6dded8bf06e6bf16a9ede233fd02");
     }
 
     //
@@ -2793,12 +2793,12 @@ bool InitBlockIndex() {
         block.nVersion = 1;
         block.nTime    = 1510231015;
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 0;
+        block.nNonce   = 152952;
 
         if (fTestNet)
         {
             block.nTime    = 1510231015;
-            block.nNonce   = 0;
+            block.nNonce   = 152952;
         }
 
         //// debug print
